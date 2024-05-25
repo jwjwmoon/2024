@@ -282,7 +282,7 @@ vt_pred
 from supervised.automl import AutoML
 from pycaret.classification import *
 
-df_sample = df.sample(n=50000, random_state=42).reset_index(drop=True)
+df_sample = df.sample(n=100000, random_state=42).reset_index(drop=True)
 df_sample.head()
 
 train_df, test_df = train_test_split(df_sample, test_size=0.2, random_state=42)
