@@ -63,9 +63,9 @@ df.head()
 
 df.info()
 
-df.drop(columns=['Unnamed: 0', 'track_id'],inplace=True)
+"""2010년부터 2023년 상반기까지의 데이터 1,159,764개를 분석"""
 
-"""2010년부터 2023년 상반기까지의 데이터 1,159,764개를 분석해보기로 함"""
+df.drop(columns=['Unnamed: 0', 'track_id'],inplace=True)
 
 df.shape
 
@@ -76,7 +76,7 @@ df.isnull().sum()
 
 col_nums=df.select_dtypes(exclude='object').columns
 
-"""장르분석을 하기위해 장르가 몇개인지 보니 장르가 82개가 존재했음. 생각했던거 보다 많았음
+"""전체 장르 : 82개
 
 # EDA
 """
@@ -103,7 +103,10 @@ df2
 df_avg_length = df2.groupby('year').agg({'duration_minutes': 'mean'})
 df_avg_length
 
-"""곡의 길이가 초단위로 되어있어서 분단위로 바꾸고 연도별로 곡의 길이를 평균내어 보았더니 2010년 이후로 곡의 길이가 점점 줄어든다."""
+"""곡의 길이를 초단위에서 분단위로 바꿈
+
+연도별 곡의 길이 평균은 2010년 이후로 감소
+"""
 
 ax_length = df_avg_length.plot(kind='line',
                        color = [(235/255,73/255,96/255)],
@@ -120,8 +123,6 @@ ax_length.set_ylim(df_avg_length['duration_minutes'].min(),df_avg_length['durati
 #Change legend labels and position outside the graph
 ax_length.legend(["Duration"], bbox_to_anchor=(1.11, 1.02));
 
-"""연도별 Popularity를 평균내어 봤더니 많은 노래가 나오지만 시간이 지나면서점점 잊혀지는걸 그래프를 통해 볼 수 있다. 노래도 신선한 노래를 찾는다."""
-
 average_popularity_by_year = df.groupby('year')['popularity'].mean().reset_index()
 
 sns.set_style("whitegrid")
@@ -133,7 +134,10 @@ plt.title('Average Popularity by Year')
 plt.xlabel('Year')
 plt.ylabel('Average Popularity')
 
-"""연도별 가장 인기있는 노래를 봤더니 popularity 점수가 크게 차이나지 않더라. 대부분의 노래가 잊혀지지만 좋은 노래는 오래동안 찾아서 듣는걸 볼 수 있다."""
+"""연도별 가장 인기있는 노래의 popularity 차이가 크지 않음
+
+→ 대부분의 노래가 잊혀지지만 좋은 노래는 오래동안 찾아서 듣는 것을 볼 수 있음
+"""
 
 most_popularity_by_year = df.groupby('year')['popularity'].max().reset_index()
 
@@ -150,21 +154,11 @@ plt.yticks(range(0, 101, 10))
 
 plt.show()
 
-"""연도별로 가장있기 있는 명곡은 다음과 같다. 보시고 한번씩 들어보시는 것도 좋을것 같다. 2000년대 초반 에미넴이 많고, 저는 몰랐지만 더 이켄들는 가수가 2020년 전후로 많이 보이는데 스포티파이에서 돈을 가장 많이 버는 가수라고 하더라."""
-
 # 연도별로 가장 높은 인기도를 가진 곡의 정보 추출
 top_popular_songs_by_year = df.loc[df.groupby('year')['popularity'].idxmax()]
-
-# 결과 출력
 top_popular_songs_by_year[['year', 'track_name', 'artist_name', 'popularity','genre']]
 
-
-
-
-
-
-
-
+"""# Genre Reduction"""
 
 df
 
@@ -188,7 +182,7 @@ pd.set_option('display.max_rows', None)
 
 print(genre_counts)
 
-# genre_mapping
+# 'genre' mapping
 
 genre_mapping = {
     'acoustic': 'acoustic',
@@ -322,11 +316,13 @@ print(mean_diff)
 print("\nVariance Absolute Difference:")
 print(var_diff)
 
-"""# ensemble"""
+"""# 모델링
+
+### 1) ensemble
+"""
 
 train_df, test_df = train_test_split(df_sample, test_size=0.2, random_state=42)
 
-# 나눈 데이터프레임 확인
 print(f"train_df shape: {train_df.shape}")
 print(f"test_df shape: {test_df.shape}")
 
@@ -386,7 +382,7 @@ vt_clf.fit(train, train_df['genre'])
 vt_pred = vt_clf.predict(test)
 vt_pred
 
-"""# AutoML - pycarat"""
+"""### 2) AutoML - pycaret"""
 
 from supervised.automl import AutoML
 from pycaret.classification import *
