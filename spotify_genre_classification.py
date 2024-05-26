@@ -349,6 +349,8 @@ scaler.fit(train_df[numeric_columns])
 train = pd.DataFrame(scaler.transform(train_df[numeric_columns]), columns = numeric_columns)
 test = pd.DataFrame(scaler.transform(test_df[numeric_columns]), columns = numeric_columns)
 
+import catboost
+
 cat_params = {
     'n_estimators': 282,
     'learning_rate': 0.19228158932342063,
@@ -389,12 +391,6 @@ from pycaret.classification import *
 
 df_sample = df.sample(n=100000, random_state=42).reset_index(drop=True)
 df_sample.head()
-
-train_df, test_df = train_test_split(df_sample, test_size=0.2, random_state=42)
-
-x_train = train_df.drop('genre', axis=1)
-y_train = train_df['genre']
-x_test = test_df.drop('genre', axis=1)
 
 def seed_everything(seed):
     random.seed(seed)
